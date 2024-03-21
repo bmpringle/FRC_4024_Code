@@ -5,6 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -76,16 +79,20 @@ public class RobotContainer
     driverXbox.b().whileTrue(new RunIntake(tower, -0.25));
     driverXbox.b().whileFalse(new RunIntake(tower, 0));
 
-    driverXbox.x().whileTrue(new RunMiddleMotor(tower, -0.25));
-    driverXbox.x().whileFalse(new RunMiddleMotor(tower, 0));
+    driverXbox.x().whileTrue(new RunMiddleMotor(tower, -0.25)).whileTrue(new RunLauncher(tower, 0.5));
+    driverXbox.x().whileFalse(new RunMiddleMotor(tower, 0)).whileFalse(new RunLauncher(tower, 0));
 
-    driverXbox.y().whileTrue(new RunLauncher(tower, 0.5));
-    driverXbox.y().whileFalse(new RunLauncher(tower, 0));
+    driverXbox.y().whileTrue(new RunIntake(tower, 0.25));
+    driverXbox.y().whileFalse(new RunIntake(tower, 0));
   }
 
 
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
+  }
+
+  public Command getAutonomousCommand() {
+    return drivebase.driveToPose(new Pose2d(new Translation2d(0, 1), new Rotation2d(0, 0)));
   }
 }
