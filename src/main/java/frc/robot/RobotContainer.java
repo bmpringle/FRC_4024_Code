@@ -10,7 +10,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.RunIntake;
+import frc.robot.commands.RunLauncher;
+import frc.robot.commands.RunMiddleMotor;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.TowerSubsystem;
+
 import java.io.File;
 
 /**
@@ -22,16 +27,19 @@ public class RobotContainer
 {
 
   // The robot's subsystems and commands are defined here...
-  private  SwerveSubsystem drivebase;
+  private SwerveSubsystem drivebase;
+  private TowerSubsystem tower;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final CommandXboxController driverXbox = new CommandXboxController(0);
+  public static final CommandXboxController driverXbox = new CommandXboxController(0);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer()
   {
+    tower = new TowerSubsystem();
+
     drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
 
     // Configure the trigger bindings
@@ -42,6 +50,7 @@ public class RobotContainer
     // controls are front-left positive
     // left stick controls translation
     // right stick controls the desired angle NOT angular rotation
+
     Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
         () -> MathUtil.applyDeadband(driverXbox.getLeftY(), 0.1),
         () -> MathUtil.applyDeadband(driverXbox.getLeftX(), 0.1),
@@ -49,6 +58,8 @@ public class RobotContainer
         () -> driverXbox.getRightY());
 
     drivebase.setDefaultCommand(driveFieldOrientedDirectAngle);
+
+
   }
 
   /**
@@ -61,6 +72,15 @@ public class RobotContainer
   private void configureBindings()
   {
     driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+
+    driverXbox.b().whileTrue(new RunIntake(tower, -0.25));
+    driverXbox.b().whileFalse(new RunIntake(tower, 0));
+
+    driverXbox.x().whileTrue(new RunMiddleMotor(tower, -0.25));
+    driverXbox.x().whileFalse(new RunMiddleMotor(tower, 0));
+
+    driverXbox.y().whileTrue(new RunLauncher(tower, 0.5));
+    driverXbox.y().whileFalse(new RunLauncher(tower, 0));
   }
 
 
