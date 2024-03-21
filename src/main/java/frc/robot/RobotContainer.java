@@ -84,6 +84,9 @@ public class RobotContainer
 
     driverXbox.y().whileTrue(new RunIntake(tower, 0.25));
     driverXbox.y().whileFalse(new RunIntake(tower, 0));
+  
+    driverXbox.rightTrigger().whileTrue(new RunIntake(tower, -0.25)).whileTrue(new RunMiddleMotor(tower, -0.25));
+    driverXbox.rightTrigger().whileFalse(new RunIntake(tower, 0)).whileFalse(new RunMiddleMotor(tower, 0));
   }
 
 
