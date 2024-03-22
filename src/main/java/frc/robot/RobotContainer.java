@@ -44,7 +44,7 @@ public class RobotContainer
     tower = new TowerSubsystem();
 
     drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-
+    
     // Configure the trigger bindings
     configureBindings();
 
@@ -98,4 +98,8 @@ public class RobotContainer
   /*public Command getAutonomousCommand() {
     return drivebase.driveToPose(new Pose2d(new Translation2d(0, 1), new Rotation2d(0, 0)));
   }*/
+
+  public void zeroGyro() {
+    drivebase.zeroGyro();
+  }
 }
