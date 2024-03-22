@@ -92,7 +92,7 @@ public class RobotContainer
     drivebase.setMotorBrake(brake);
   }
 
-  public Command getAutonomousCommand() {
+  /*public Command getAutonomousCommand() {
     return drivebase.driveToPose(new Pose2d(new Translation2d(0, 1), new Rotation2d(0, 0)));
-  }
+  }*/
 }

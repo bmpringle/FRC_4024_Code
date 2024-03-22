@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.swervedrive;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 //import com.pathplanner.lib.auto.AutoBuilder;
 //import com.pathplanner.lib.commands.PathPlannerAuto;
 //import com.pathplanner.lib.path.PathConstraints;
@@ -48,7 +49,9 @@ import swervelib.SwerveModule;
 import swervelib.imu.SwerveIMU;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
+import swervelib.parser.SwerveModuleConfiguration;
 import swervelib.parser.SwerveParser;
+import swervelib.parser.json.ModuleJson;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
@@ -76,7 +79,35 @@ public class SwerveSubsystem extends SubsystemBase
     try {
       maximumSpeed = Units.feetToMeters(4.5);
       File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(), "swerve");
-      swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(maximumSpeed);
+      swerveDrive = new SwerveParser(swerveJsonDirectory) {
+        @Override
+        public SwerveDrive createSwerveDrive(SimpleMotorFeedforward driveFeedforward, double maxSpeed) {
+          SwerveModuleConfiguration[] moduleConfigurations =
+              new SwerveModuleConfiguration[moduleJsons.length];
+          for (int i = 0; i < moduleConfigurations.length; i++) {
+            ModuleJson module = moduleJsons[i];
+            moduleConfigurations[i] =
+                module.createModuleConfiguration(
+                    pidfPropertiesJson.angle,
+                    pidfPropertiesJson.drive,
+                    physicalPropertiesJson.createPhysicalProperties(),
+                    swerveDriveJson.modules[i]);
+          }
+          SwerveDriveConfiguration swerveDriveConfiguration =
+              new SwerveDriveConfiguration(
+                  moduleConfigurations,
+                  new FakeIMU(),
+                  swerveDriveJson.invertedIMU,
+                  driveFeedforward,
+                  physicalPropertiesJson.createPhysicalProperties());
+
+          return new SwerveDrive(
+              swerveDriveConfiguration,
+              controllerPropertiesJson.createControllerConfiguration(swerveDriveConfiguration, maxSpeed),
+              maxSpeed);
+        }
+
+      }.createSwerveDrive(maximumSpeed);
     } catch(Exception e) {
       System.err.println(e.getMessage());
       System.err.println(e.getCause());
