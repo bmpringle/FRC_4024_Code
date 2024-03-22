@@ -204,6 +204,12 @@ public class SwerveSubsystem extends SubsystemBase
                                      );
   }
 
+  public boolean withinHypotDeadband(double x, double y) {
+    return Math.hypot(x, y) < 0.5;
+  }
+
+  double lastAngleDegrees = 0;
+
   /**
    * Command to drive the robot using translative values and heading as a setpoint.
    *
@@ -220,6 +226,9 @@ public class SwerveSubsystem extends SubsystemBase
     return run(() -> {
       double xInput = Math.pow(translationX.getAsDouble(), 3); // Smooth control out
       double yInput = Math.pow(translationY.getAsDouble(), 3); // Smooth control out
+
+      double angle = withinHypotDeadband(headingX.getAsDouble(), headingY.getAsDouble()) ? lastAngleDegrees : Math.atan2(headingX.getAsDouble(), headingY.getAsDouble());
+      lastAngleDegrees = angle * 180.0 / Math.PI;
 
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
@@ -345,6 +354,9 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
     swerveDrive.updateOdometry();
+    SmartDashboard.putNumber("yaw", swerveDrive.getYaw().getDegrees());
+    SmartDashboard.putNumber("odometryheading", swerveDrive.getOdometryHeading().getDegrees());
+    SmartDashboard.putNumber("set angle of robot", lastAngleDegrees);
   }
 
   @Override
