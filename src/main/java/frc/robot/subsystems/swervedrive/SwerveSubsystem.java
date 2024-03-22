@@ -77,37 +77,9 @@ public class SwerveSubsystem extends SubsystemBase
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     
     try {
-      maximumSpeed = Units.feetToMeters(4.5);
+      maximumSpeed = Units.feetToMeters(1);
       File swerveJsonDirectory = new File(Filesystem.getDeployDirectory(), "swerve");
-      swerveDrive = new SwerveParser(swerveJsonDirectory) {
-        @Override
-        public SwerveDrive createSwerveDrive(SimpleMotorFeedforward driveFeedforward, double maxSpeed) {
-          SwerveModuleConfiguration[] moduleConfigurations =
-              new SwerveModuleConfiguration[moduleJsons.length];
-          for (int i = 0; i < moduleConfigurations.length; i++) {
-            ModuleJson module = moduleJsons[i];
-            moduleConfigurations[i] =
-                module.createModuleConfiguration(
-                    pidfPropertiesJson.angle,
-                    pidfPropertiesJson.drive,
-                    physicalPropertiesJson.createPhysicalProperties(),
-                    swerveDriveJson.modules[i]);
-          }
-          SwerveDriveConfiguration swerveDriveConfiguration =
-              new SwerveDriveConfiguration(
-                  moduleConfigurations,
-                  new FakeIMU(),
-                  swerveDriveJson.invertedIMU,
-                  driveFeedforward,
-                  physicalPropertiesJson.createPhysicalProperties());
-
-          return new SwerveDrive(
-              swerveDriveConfiguration,
-              controllerPropertiesJson.createControllerConfiguration(swerveDriveConfiguration, maxSpeed),
-              maxSpeed);
-        }
-
-      }.createSwerveDrive(maximumSpeed);
+      swerveDrive = new SwerveParser(swerveJsonDirectory).createSwerveDrive(maximumSpeed);
     } catch(Exception e) {
       System.err.println(e.getMessage());
       System.err.println(e.getCause());
