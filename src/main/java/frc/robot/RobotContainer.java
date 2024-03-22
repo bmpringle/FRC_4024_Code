@@ -76,17 +76,17 @@ public class RobotContainer
   {
     driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
-    driverXbox.b().whileTrue(new RunIntake(tower, -0.25));
+    driverXbox.b().whileTrue(new RunIntake(tower, -0.50));
     driverXbox.b().whileFalse(new RunIntake(tower, 0));
 
-    driverXbox.x().whileTrue(new RunMiddleMotor(tower, -0.25)).whileTrue(new RunLauncher(tower, 0.5));
-    driverXbox.x().whileFalse(new RunMiddleMotor(tower, 0)).whileFalse(new RunLauncher(tower, 0));
+    driverXbox.x().whileTrue(new RunMiddleMotor(tower, -0.50));
+    driverXbox.x().whileFalse(new RunMiddleMotor(tower, 0));
 
-    driverXbox.y().whileTrue(new RunIntake(tower, 0.25));
-    driverXbox.y().whileFalse(new RunIntake(tower, 0));
+    driverXbox.y().whileTrue(new RunLauncher(tower, 0.75));
+    driverXbox.y().whileFalse(new RunLauncher(tower, 0));
   
-    driverXbox.rightTrigger().whileTrue(new RunIntake(tower, -0.25)).whileTrue(new RunMiddleMotor(tower, -0.25));
-    driverXbox.rightTrigger().whileFalse(new RunIntake(tower, 0)).whileFalse(new RunMiddleMotor(tower, 0));
+    //driverXbox.rightTrigger().whileTrue(new RunIntake(tower, -0.25)).whileTrue(new RunMiddleMotor(tower, -0.25));
+    //driverXbox.rightTrigger().whileFalse(new RunIntake(tower, 0)).whileFalse(new RunMiddleMotor(tower, 0));
   }
 
 
