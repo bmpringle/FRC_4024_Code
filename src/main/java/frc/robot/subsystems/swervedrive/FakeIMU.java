@@ -48,8 +48,7 @@ public class FakeIMU extends SwerveIMU {
 
     @Override
     public Object getIMU() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIMU'");
+        return new Object();
     }
 
 }
